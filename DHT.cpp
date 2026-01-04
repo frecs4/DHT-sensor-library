@@ -118,7 +118,9 @@ float DHT::readTemperature(bool S, bool force) {
         }
       } else {
         f = int16_t(data[2] << 8 | data[3]);
+        f *= 0.1;
       }
+      f *= 0.1;
       if (S) {
         f = convertCtoF(f);
       }
