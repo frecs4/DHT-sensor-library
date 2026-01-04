@@ -39,10 +39,11 @@
  *  @param  count
  *          number of sensors
  */
-DHT::DHT(uint8_t pin, uint8_t type, uint8_t count) {
+DHT::DHT(uint8_t pin, uint8_t type, uint8_t count, bool cloneMode) {
   (void)count; // Workaround to avoid compiler warning.
   _pin = pin;
   _type = type;
+  _cloneMode = cloneMode;
 #ifdef __AVR
   _bit = digitalPinToBitMask(pin);
   _port = digitalPinToPort(pin);
@@ -87,37 +88,41 @@ float DHT::readTemperature(bool S, bool force) {
 
   if (read(force)) {
     switch (_type) {
-      case DHT11:
-        f = data[2];
-        if (data[3] & 0x80) {
-          f = -1 - f;
-        }
-        f += (data[3] & 0x0f) * 0.1;
-        if (S) {
-          f = convertCtoF(f);
-        }
-        break;
-      case DHT12:
-        f = data[2];
-        f += (data[3] & 0x0f) * 0.1;
-        if (data[2] & 0x80) {
-          f *= -1;
-        }
-        if (S) {
-          f = convertCtoF(f);
-        }
-        break;
-      case DHT22:
-      case DHT21:
+    case DHT11:
+      f = data[2];
+      if (data[3] & 0x80) {
+        f = -1 - f;
+      }
+      f += (data[3] & 0x0f) * 0.1;
+      if (S) {
+        f = convertCtoF(f);
+      }
+      break;
+    case DHT12:
+      f = data[2];
+      f += (data[3] & 0x0f) * 0.1;
+      if (data[2] & 0x80) {
+        f *= -1;
+      }
+      if (S) {
+        f = convertCtoF(f);
+      }
+      break;
+    case DHT22:
+    case DHT21:
+      if (false == _cloneMode) {
         f = ((word)(data[2] & 0x7F)) << 8 | data[3];
         f *= 0.1;
         if (data[2] & 0x80) {
           f *= -1;
-        }
-        if (S) {
-          f = convertCtoF(f);
-        }
-        break;
+      }
+      } else {
+        f = int16_t(data[2] << 8 | data[3]);
+      }
+      if (S) {
+        f = convertCtoF(f);
+      }
+      break;
     }
   }
   return f;

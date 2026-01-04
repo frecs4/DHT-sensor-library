@@ -6,6 +6,14 @@ An Arduino library for the DHT series of low-cost temperature/humidity sensors.
 
 You can find DHT tutorials [here](https://learn.adafruit.com/dht).
 
+### DHT22 Clone Support 
+
+Some DHT22-compatible sensors (clones) use a signed 16-bit temperature format instead of the original DHT22 sign bit scheme. 
+To enable clone support: 
+```cpp 
+DHT dht(pin, DHT22, true);
+```
+
 # Dependencies
  * [Adafruit Unified Sensor Driver](https://github.com/adafruit/Adafruit_Sensor)
 
