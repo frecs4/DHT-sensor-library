@@ -62,7 +62,8 @@ static const uint8_t AM2301{21}; /**< AM2301 */
  */
 class DHT {
 public:
-  DHT(uint8_t pin, uint8_t type, uint8_t count = 6);
+  // cloneMode: Enable support for DHT22 clones that use signed int16 format
+  DHT(uint8_t pin, uint8_t type, uint8_t count = 6, bool cloneMode = false);
   void begin(uint8_t usec = 55);
   float readTemperature(bool S = false, bool force = false);
   float convertCtoF(float);
@@ -76,6 +77,7 @@ public:
 private:
   uint8_t data[5];
   uint8_t _pin, _type;
+  bool _cloneMode;
 #ifdef __AVR
   // Use direct GPIO access on an 8-bit AVR so keep track of the port and
   // bitmask for the digital pin connected to the DHT.  Other platforms will use
